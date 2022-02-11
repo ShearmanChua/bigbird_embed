@@ -7,6 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 import os
 from tempfile import gettempdir
+import ast
 from clearml import Task, Logger
 from tqdm import tqdm
 
@@ -20,7 +21,7 @@ def main():
     task = Task.init(project_name='bigbird', task_name='bigbird_embedding_task')
     logger = task.get_logger()
     task.set_base_docker("nvcr.io/nvidia/pytorch:20.08-py3")
-    task.execute_remotely(queue_name="compute", exit_process=True)
+    task.execute_remotely(queue_name="compute2", exit_process=True)
     df = pd.read_csv('300_texts_cleaned.csv')
     docs = df['cleaned_texts'].tolist()
     device = torch.device("cuda")
@@ -65,7 +66,10 @@ def main():
 
 
     df['embeddings'] = embeddings
-    df.to_csv("300_texts_embbed.csv",index=False)
+    df.embeddings = df.embeddings.apply(lambda s: list(ast.literal_eval(s)))
+    df.to_csv(os.path.join(gettempdir(), "300_texts_embbed.csv"),index=False)
+    task.upload_artifact(name='300_texts_embbed', artifact_object=os.path.join(gettempdir(), "300_texts_embbed.csv"))
+    
 
 
 
