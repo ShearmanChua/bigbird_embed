@@ -18,7 +18,7 @@ def mean_pooling(model_output, attention_mask):
 
 def main():
     task = Task.init(project_name='bigbird', task_name='bigbird_embedding_task')
-    logger = task.get_logger
+    logger = task.get_logger()
     # task.set_base_docker("nvcr.io/nvidia/pytorch:20.08-py3")
     # task.execute_remotely(queue_name="compute", exit_process=True)
     df = pd.read_csv('300_texts_cleaned.csv')

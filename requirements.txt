@@ -1,5 +1,5 @@
 transformers
 torch
 pandas
-typing_extensions
+typing_extensions == 4.0.1
 tqdm
