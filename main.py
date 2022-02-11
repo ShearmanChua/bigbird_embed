@@ -16,6 +16,7 @@ def mean_pooling(model_output, attention_mask):
 
 def main():
     task = Task.init(project_name='bigbird', task_name='bigbird embedding task')
+    task.execute_remotely(queue_name="compute", exit_process=True)
     df = pd.read_csv('300_texts_cleaned.csv')
     docs = df['cleaned_texts'].tolist()
     device = torch.device("cuda")
