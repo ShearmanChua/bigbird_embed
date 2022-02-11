@@ -15,7 +15,7 @@ def mean_pooling(model_output, attention_mask):
     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
 def main():
-    task = Task.init(project_name='bigbird', task_name='bigbird embedding task')
+    task = Task.init(project_name='bigbird', task_name='bigbird_embedding_task')
     task.execute_remotely(queue_name="compute", exit_process=True)
     df = pd.read_csv('300_texts_cleaned.csv')
     docs = df['cleaned_texts'].tolist()
