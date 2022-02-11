@@ -41,7 +41,7 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=1)
     embeddings = []
 
-    pbar = tqdm(train_dataset.__len__, position=0, leave=True)
+    pbar = tqdm(len(docs), position=0, leave=True)
     doc_count = 0
     for batch in train_loader:
     
@@ -59,8 +59,8 @@ def main():
         embeddings.append(sentence_embeddings.cpu().detach().numpy()[0])
         pbar.update(1)
         doc_count += 1
-        pbar.set_description('Documents processed: {}/{}'.format(doc_count,train_dataset.__len__))
-        logger.report_text('Documents processed: {}/{}'.format(doc_count,train_dataset.__len__))
+        pbar.set_description('Documents processed: {}/{}'.format(doc_count,len(docs)))
+        logger.report_text('Documents processed: {}/{}'.format(doc_count,len(docs)))
 
 
     df['embeddings'] = embeddings
