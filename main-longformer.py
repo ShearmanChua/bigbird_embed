@@ -20,7 +20,7 @@ def mean_pooling(model_output, attention_mask):
     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
 def main():
-    task = Task.init(project_name='bigbird', task_name='bigbird_embedding_task')
+    task = Task.init(project_name='bigbird', task_name='longformer_embedding_task')
     logger = task.get_logger()
     task.set_base_docker("nvcr.io/nvidia/pytorch:20.08-py3")
     task.execute_remotely(queue_name="compute2", exit_process=True)
@@ -54,12 +54,15 @@ def main():
         docs = batch['Text']
 
         encoded_input = tokenizer(docs, padding=True,truncation=True,return_tensors='pt')
+        global_attention_mask = [1].extend([0]*encoded_input["input_ids"].shape[-1])
+
+        encoded_input["global_attention_mask"] = global_attention_mask
 
         with torch.no_grad():
             model_output = model(**encoded_input)
 
         # Perform pooling
-        sentence_embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
+        sentence_embeddings = model_output.last_hidden_state[:,0]
         # Normalize embeddings
         sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
         embeddings.append(sentence_embeddings.cpu().detach().numpy()[0])
